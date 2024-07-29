@@ -1,0 +1,47 @@
+networks:
+  traefik:
+
+services:
+
+  traefik:
+    image: "traefik:latest"
+    labels:
+      #Dashboard
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.entrypoints=web"
+      - "traefik.http.routers.api.rule=Host(`traefik.docker.localhost`)"
+      - "traefik.http.routers.api.service=api@internal"
+
+    command:
+      - "--log.level=DEBUG"
+      - "--configfile=/traefik.yml"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./configs/static/proxy-v2.yml:/traefik.yml
+      - ./configs/dynamic/wrr_example.yml:/dynamic.yml
+    ports:
+      - "80:80"
+      - "9090:9090"
+    networks:
+      - traefik
+
+  whoami-dc1-1:
+    image: "traefik/whoami:latest" 
+    networks:
+      - traefik
+
+  whoami-dc1-2:
+    image: "traefik/whoami:latest"
+    networks:
+      - traefik
+
+  whoami-dc2-1:
+    image: "traefik/whoami:latest" 
+    networks:
+      - traefik
+
+  whoami-dc2-2:
+    image: "traefik/whoami:latest" 
+    networks:
+      - traefik      
+      

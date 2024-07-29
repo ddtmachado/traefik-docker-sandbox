@@ -1,0 +1,41 @@
+http:
+  services:
+    whoami-public:
+      weighted:
+        healthCheck: {}
+        services:
+        - name: whoami-dc1
+          weight: 3
+        - name: whoami-dc2
+          weight: 1
+
+    whoami-dc1:
+      loadBalancer:
+        servers:
+          - url: "http://whoami-dc1-1:80"
+          - url: "http://whoami-dc1-2:80"
+        healthCheck:
+          scheme: http
+          interval: 2s
+          timeout: 1s
+          path: /ping
+
+    whoami-dc2:
+      loadBalancer:
+        servers:
+          - url: "http://whoami-dc2-1:80"
+          - url: "http://whoami-dc2-2:80"
+        healthCheck:
+          scheme: http
+          interval: 2s
+          timeout: 1s
+          path: /ping
+
+  routers:
+    dashboard:
+      rule: Host(`traefik.docker.localhost`)
+      service: api@internal
+
+    whoami-router:
+      rule: Host(`whoami.docker.localhost`)
+      service: whoami-public

@@ -1,0 +1,23 @@
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+log:
+  level: "DEBUG"
+
+api:
+  dashboard: true
+  debug: true
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+  tcp:
+    address: ":9090"
+
+providers:
+  file:
+    filename: /dynamic.yml
+
